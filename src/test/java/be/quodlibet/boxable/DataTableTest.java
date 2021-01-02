@@ -1,7 +1,7 @@
 package be.quodlibet.boxable;
 
 import be.quodlibet.boxable.datatable.DataTable;
-import be.quodlibet.boxable.datatable.updateCellProperty;
+import be.quodlibet.boxable.datatable.UpdateCellProperty;
 
 import com.google.common.io.Files;
 import java.awt.Color;
@@ -11,8 +11,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -75,7 +75,7 @@ public class DataTableTest
         float bottomMargin = 0;
 
         //Create the data
-        List<List<? extends Object>> data = new ArrayList<>();
+        List<List> data = new ArrayList<>();
         data.add(new ArrayList<>(
                 Arrays.asList("Column One", "Column Two", "Column Three", "Column Four", "Column Five")));
         for (int i = 1; i <= 100; i++) {
@@ -286,18 +286,14 @@ public class DataTableTest
         c1.setFillColor(new Color(144, 195, 212));
         dataTable.addHeaderRow(h1);
         t = new DataTable(dataTable, page);
-        t.getDataCellTemplateEvenList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(Color.WHITE);
-				
-			}});
-        t.getDataCellTemplateOddList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(new Color(250, 242, 242));
-				
-			}});
+        Iterator<Cell> iterator = t.getDataCellTemplateEvenList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(Color.WHITE);
+        }
+        iterator = t.getDataCellTemplateOddList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(new Color(250, 242, 242));
+        }
         t.addCsvToTable(data, DataTable.HASHEADER, ';');
         yStart = dataTable.draw() - tablesmargin;
 
@@ -314,18 +310,14 @@ public class DataTableTest
         c1.setFillColor(new Color(144, 195, 212));
         dataTable.addHeaderRow(h1);
         t = new DataTable(dataTable, page);
-        t.getDataCellTemplateEvenList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(Color.WHITE);
-				
-			}});
-        t.getDataCellTemplateOddList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(new Color(250, 242, 242));
-				
-			}});
+        iterator = t.getDataCellTemplateEvenList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(new Color(250, 242, 242));
+        }
+        iterator = t.getDataCellTemplateOddList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(new Color(250, 242, 242));
+        }
         //set the style template for first column
         t.getFirstColumnCellTemplate().setFillColor(new Color(13, 164, 214));
         //set the style template for last column
@@ -346,18 +338,14 @@ public class DataTableTest
         c1.setFillColor(new Color(144, 195, 212));
         dataTable.addHeaderRow(h1);
         t = new DataTable(dataTable, page);
-        t.getDataCellTemplateEvenList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(Color.WHITE);
-				
-			}});
-        t.getDataCellTemplateOddList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setFillColor(new Color(250, 242, 242));
-				
-			}});
+        iterator = t.getDataCellTemplateEvenList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(new Color(250, 242, 242));
+        }
+        iterator = t.getDataCellTemplateOddList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setFillColor(new Color(250, 242, 242));
+        }
         //set the style template for first column odd
         t.getFirstColumnCellTemplateOdd().setFillColor(new Color(13, 164, 214));
         //set the style template for first column even
@@ -383,7 +371,7 @@ public class DataTableTest
         dataTable.addHeaderRow(h1);
         final Color c01 = new Color(160, 174, 224);
         final Color c02 = new Color(23, 174, 224);
-        t = new DataTable(dataTable, page,new updateCellProperty() {
+        t = new DataTable(dataTable, page,new UpdateCellProperty() {
 			
 			@Override
 			public void updateCellPropertysAtColumn(Cell<PDPage> c, int column, int row) {
@@ -395,18 +383,14 @@ public class DataTableTest
 				}
 			}
 		});
-        t.getDataCellTemplateEvenList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setAlign(HorizontalAlignment.RIGHT);
-				
-			}});
-        t.getDataCellTemplateOddList().forEach(new Consumer<Cell<PDPage>>() {
-			@Override
-			public void accept(Cell<PDPage> t) {
-				t.setAlign(HorizontalAlignment.RIGHT);
-				
-			}});
+        iterator = t.getDataCellTemplateEvenList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setAlign(HorizontalAlignment.RIGHT);
+        }
+        iterator = t.getDataCellTemplateOddList().iterator();
+        while (iterator.hasNext()){
+            iterator.next().setAlign(HorizontalAlignment.RIGHT);
+        }
         //set the style template for first column back to left
         t.getFirstColumnCellTemplate().setAlign(HorizontalAlignment.LEFT);
         t.addCsvToTable(data, DataTable.HASHEADER, ';');
