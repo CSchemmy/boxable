@@ -235,6 +235,7 @@ public abstract class Table<T extends PDPage> {
 	 */
 	public float draw() throws IOException {
 		ensureStreamIsOpen();
+        Row<T> previousRow = null;
 
 		for (Row<T> row : rows) {
 			if (header.contains(row)) {
@@ -246,14 +247,15 @@ public abstract class Table<T extends PDPage> {
 					tableStartedAtNewPage = true;
 				}
 			}
-			drawRow(row);
+			drawRow(row, previousRow);
+            previousRow = row;
 		}
-
+		pageBreakDrowTableBorder(previousRow);
 		endTable();
 		return yStart;
 	}
 
-	private void drawRow(Row<T> row) throws IOException {
+	private void drawRow(Row<T> row, Row<T> previousRow) throws IOException {
 		// row.getHeight is currently an extremely expensive function so get the value
 		// once during drawing and reuse it, since it will not change during drawing
 		float rowHeight = row.getHeight();
@@ -284,7 +286,7 @@ public abstract class Table<T extends PDPage> {
 		}
 
             if (isEndOfPage(rowHeight) && !header.contains(row)) {
-
+                pageBreakDrowTableBorder(previousRow);
 			// Draw line at bottom of table
 			endTable();
 
@@ -294,7 +296,7 @@ public abstract class Table<T extends PDPage> {
 			// redraw all headers on each currentPage
 			if (!header.isEmpty()) {
 				for (Row<T> headerRow : header) {
-					drawRow(headerRow);
+					drawRow(headerRow,previousRow);
 				}
 				// after you draw all header rows on next page please keep
 				// removing top borders to avoid double border drawing
@@ -802,6 +804,24 @@ public abstract class Table<T extends PDPage> {
 		this.yStart = yStartNewPage - pageTopMargin;
 		this.currentPage = createNewPage();
 		this.tableContentStream = createPdPageContentStream();
+	}
+
+	private void pageBreakDrowTableBorder(Row previousRow) throws IOException {
+		if (previousRow == null){
+			return; // first line
+		}
+		Cell<PDPage> firstCell = (Cell<PDPage>) previousRow.getCells().get(0);
+		if (firstCell == null || firstCell.getLeftBorder() == null) {
+			return; // nothing to do
+		}
+		if (firstCell.getBottomBorder() != null){
+			return; // Already printed
+		}
+		Iterator<Cell<T>> cellIterator = previousRow.getCells().iterator();
+		while (cellIterator.hasNext()) {
+			cellIterator.next().setBottomBorderStyle(firstCell.getLeftBorder());
+        }
+		drawVerticalLines(previousRow,0f);
 	}
 
 	private void addBookmark(PDOutlineItem bookmark) {

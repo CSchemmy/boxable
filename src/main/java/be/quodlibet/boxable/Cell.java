@@ -684,12 +684,20 @@ public class Cell<T extends PDPage> {
 	 * @param sourceCell Source {@link Cell} from which cell style will be copied.
 	 */
 	public void copyCellStyle(Cell sourceCell) {
-		Boolean leftBorder = this.leftBorderStyle == null;
-		setBorderStyle(sourceCell.getTopBorder());
-		if (leftBorder) {
-			this.leftBorderStyle = null;// if left border wasn't set, don't set
-										// it now
-		}
+//		Boolean leftBorder = this.leftBorderStyle == null;
+//		setBorderStyle(sourceCell.getTopBorder());
+//		if (leftBorder) {
+//			this.leftBorderStyle = null;// if left border wasn't set, don't set
+//										// it now
+//		}
+		this.leftBorderStyle = sourceCell.getLeftBorder();
+		this.rightBorderStyle = sourceCell.getRightBorder();
+		this.topBorderStyle = sourceCell.getTopBorder();
+		this.bottomBorderStyle = sourceCell.getBottomBorder();
+		this.leftPadding = sourceCell.getLeftPadding();
+		this.rightPadding = sourceCell.getRightPadding();
+		this.topPadding = sourceCell.getTopPadding();
+		this.bottomPadding = sourceCell.getBottomPadding();
 		this.font = sourceCell.getFont();// otherwise paragraph gets invalidated
 		this.fontBold = sourceCell.getFontBold();
 		this.fontSize = sourceCell.getFontSize();

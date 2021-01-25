@@ -126,13 +126,13 @@ public class DataTableTest
         if (dataTable.getCurrentPage() != page) {
             page = dataTable.getCurrentPage();
         }
-        
+
         BaseTable dataTable1 = new BaseTable(yStart, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true,
                 true);
         DataTable t1 = new DataTable(dataTable1, page);
         t1.addCsvToTable(data1, DataTable.HASHEADER, ';');
         dataTable1.draw();
-        
+
         File file = new File("target/CSVexampleColWidths.pdf");
         System.out.println("Sample file saved at : " + file.getAbsolutePath());
         Files.createParentDirs(file);
@@ -160,7 +160,7 @@ public class DataTableTest
         DataTable t = new DataTable(dataTable, page);
         t.addCsvToTable(data, DataTable.HASHEADER, ';');
         dataTable.draw();
-        
+
         File file = new File("target/CSVexamplePortrait.pdf");
         System.out.println("Sample file saved at : " + file.getAbsolutePath());
         Files.createParentDirs(file);
@@ -393,6 +393,59 @@ public class DataTableTest
         }
         //set the style template for first column back to left
         t.getFirstColumnCellTemplate().setAlign(HorizontalAlignment.LEFT);
+        t.addCsvToTable(data, DataTable.HASHEADER, ';');
+        yStart = dataTable.draw() - tablesmargin;
+
+        if (dataTable.getCurrentPage() != page) {
+            page = dataTable.getCurrentPage();
+        }
+
+// Next Table with other design
+
+        dataTable = new BaseTable(yStart, yStartNewPage, bottomMargin, tableWidth, margin, doc, page, true,
+                true);
+        h1 = dataTable.createRow(0f);
+        c1 = h1.createCell(100, "witout border");
+        c1.setFillColor(new Color(144, 195, 212));
+        dataTable.addHeaderRow(h1);
+        final Color c101 = new Color(160, 174, 224);
+        final Color c102 = new Color(23, 174, 224);
+        t = new DataTable(dataTable, page, new UpdateCellProperty() {
+
+            @Override
+            public void updateCellPropertiesAtColumn(Cell<PDPage> c, int column, int row) {
+                if (column == 11) {
+                    if (c.getText().startsWith("0,2"))
+                        c.setFillColor(c102);
+                    if (c.getText().startsWith("0,1"))
+                        c.setFillColor(c101);
+                }
+                if (column != 12) {
+                    c.setRightBorderStyle(null);
+                    if (column != 0) {
+                        c.setLeftBorderStyle(null);
+                    }
+                }
+            }
+        });
+        iterator = t.getDataCellTemplateEvenList().iterator();
+        while (iterator.hasNext()) {
+            Cell cell = iterator.next();
+            cell.setAlign(HorizontalAlignment.RIGHT);
+            cell.setTopBorderStyle(null);
+            cell.setBottomBorderStyle(null);
+        }
+        iterator = t.getDataCellTemplateOddList().iterator();
+        while (iterator.hasNext()) {
+            Cell cell = iterator.next();
+            cell.setAlign(HorizontalAlignment.RIGHT);
+            cell.setTopBorderStyle(null);
+            cell.setBottomBorderStyle(null);
+        }
+        //set the style template for first column back to left
+        t.getFirstColumnCellTemplate().setAlign(HorizontalAlignment.LEFT);
+        t.getFirstColumnCellTemplate().setRightBorderStyle(null);
+        t.getLastColumnCellTemplate().setLeftBorderStyle(null);
         t.addCsvToTable(data, DataTable.HASHEADER, ';');
         yStart = dataTable.draw() - tablesmargin;
 
